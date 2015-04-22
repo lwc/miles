@@ -1,0 +1,25 @@
+{
+  "name": "miles",
+  "version": "0.0.0",
+  "description": "slack + mopidy bot, with echo nest recommendations",
+  "main": "index.js",
+  "dependencies": {
+    "mopidy": "^0.5.0",
+    "echojs": "^0.1.4",
+    "slack-client": "^1.4.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/lwc/miles.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lwc/miles/issues"
+  },
+  "homepage": "https://github.com/lwc/miles"
+}
