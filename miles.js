@@ -54,6 +54,31 @@ Miles.prototype.command = function(initiator, callback) {
     return command;
 };
 
+var addTracks = function(tracks) {
+    var channel = this.channel;
+    if (tracks.length > 0) {
+
+        var trackUris = tracks.map(function(track) {
+            return track.uri;
+        });
+        var trackNames = tracks.map(function(track) {
+            return track.name;
+        });
+
+        this.mopidy.tracklist.add({uris: trackUris}).then(function() {
+
+            channel.postMessage({
+                'text': ":notes: Queuing " + tracks.length + " songs :notes:",
+                'as_user': true,
+                'attachments': [{"text": trackNames.join("\n")}]
+            });
+        });            
+    } else {
+        channel.send("I didn't find anything to queue :frowning:");
+    }
+};
+
+
 Miles.prototype.dispatch = function(message) {
 
     if (!isDirectedAtMe(this.slack.self.id, message.text)) {
@@ -70,7 +95,7 @@ Miles.prototype.dispatch = function(message) {
     };
 
     var execute = function(cmd) {
-
+        
     };
 
     var context = {
@@ -82,6 +107,7 @@ Miles.prototype.dispatch = function(message) {
         user: this.slack.getUserByID(message.user),
         messageUser: messageUser
     };
+    context.addTracks = addTracks.bind(context);
     
     var foundCommand = false;
     for (var i = 0; i < this.commands.length; i++) {
@@ -106,7 +132,9 @@ function isDirectedAtMe(id, message) {
 }
 
 function cleanMessage(message) {
-    return message.replace(/^<.+>:?\s*/, '');
+    return message
+        .replace(/^<[@\w]+>:?\s*/, '') // remove username from start
+        .replace(/<([^>]+)>/, '$1'); // remove formatting around links
 }
 
 Miles.prototype.run = function() {

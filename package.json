@@ -6,7 +6,8 @@
   "dependencies": {
     "mopidy": "^0.5.0",
     "echojs": "^0.1.4",
-    "slack-client": "^1.4.0"
+    "slack-client": "^1.4.0",
+    "spotify-uri": "^1.0.0"
   },
   "devDependencies": {},
   "scripts": {
