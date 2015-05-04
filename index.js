@@ -35,8 +35,47 @@ var getTrackName = function(track) {
 miles.command("current", function() {
     var channel = this.channel;
     this.mopidy.playback.getCurrentTrack().then(function(data) {
-        if (data && data.uri) {
-            channel.send("Currently playing " + getLink(data.uri));    
+        if (data && data.name) {
+            var image = null;
+
+            if (data.album.images) {
+                image = data.album.images[0];
+            }
+
+            var fields = [
+                {
+                    title: "Title",
+                    value: data.name,
+                    short: true
+                },
+                {
+                    title: "Album",
+                    value: data.album.name,
+                    short: true
+                }
+            ];
+            if (data.artists && data.artists[0]) {
+                fields.push({
+                    title: "Artist",
+                    value: data.artists[0].name,
+                    short: true          
+                });
+            }
+            if (data.date) {
+                fields.push({
+                    title: "Year",
+                    value: data.date,
+                    short: true               
+                });
+            }
+
+            channel.postMessage({
+                text: ":notes: Currently playing :notes:",
+                as_user: true,
+                attachments: [{fields: fields}],
+                image_url: image
+            });
+
         } else {
             channel.send("Nothing playing :frowning:");    
         }
@@ -116,6 +155,7 @@ miles.command("search genres {term}", function(term) {
 
 miles.command("queue artist {artist}", function(artist) {
     var channel = this.channel;
+    var addTracks = this.addTracks;    
     this.mopidy.library.search({query: {artist: [artist]}, uris: ["spotify:"], exact: true}).then(function(data) {
 
         var tracks = [];
